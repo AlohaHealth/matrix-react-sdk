@@ -123,6 +123,7 @@ const CRYPTO_SETTINGS = [
 const THEMES = [
     { label: _td('Light theme'), value: 'light' },
     { label: _td('Dark theme'), value: 'dark' },
+    { label: _td('Aloha Blue theme'), value: 'AlohaBlue' },
     { label: _td('Status.im theme'), value: 'status' },
 ];
 
