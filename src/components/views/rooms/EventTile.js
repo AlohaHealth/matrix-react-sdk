@@ -47,6 +47,7 @@ const eventTileTypes = {
 };
 
 const stateEventTileTypes = {
+    'm.room.create': 'messages.RoomCreate',
     'm.room.member': 'messages.TextualEvent',
     'm.room.name': 'messages.TextualEvent',
     'm.room.avatar': 'messages.RoomAvatarEvent',
@@ -56,6 +57,7 @@ const stateEventTileTypes = {
     'm.room.topic': 'messages.TextualEvent',
     'm.room.power_levels': 'messages.TextualEvent',
     'm.room.pinned_events': 'messages.TextualEvent',
+    'm.room.server_acl': 'messages.TextualEvent',
 
     'im.vector.modular.widgets': 'messages.TextualEvent',
 };
@@ -482,14 +484,21 @@ module.exports = withMatrixClient(React.createClass({
         const eventType = this.props.mxEvent.getType();
 
         // Info messages are basically information about commands processed on a room
-        const isInfoMessage = (eventType !== 'm.room.message' && eventType !== 'm.sticker');
+        const isInfoMessage = (eventType !== 'm.room.message' && eventType !== 'm.sticker' && eventType != 'm.room.create');
 
-        const EventTileType = sdk.getComponent(getHandlerTile(this.props.mxEvent));
+        const tileHandler = getHandlerTile(this.props.mxEvent);
         // This shouldn't happen: the caller should check we support this type
         // before trying to instantiate us
-        if (!EventTileType) {
-            throw new Error("Event type not supported");
+        if (!tileHandler) {
+            const {mxEvent} = this.props;
+            console.warn(`Event type not supported: type:${mxEvent.getType()} isState:${mxEvent.isState()}`);
+            return <div className="mx_EventTile mx_EventTile_info mx_MNoticeBody">
+                <div className="mx_EventTile_line">
+                    { _t('This event could not be displayed') }
+                </div>
+            </div>;
         }
+        const EventTileType = sdk.getComponent(tileHandler);
 
         const isSending = (['sending', 'queued', 'encrypting'].indexOf(this.props.eventSendStatus) !== -1);
         const isRedacted = isMessageEvent(this.props.mxEvent) && this.props.isRedacted;
@@ -527,6 +536,9 @@ module.exports = withMatrixClient(React.createClass({
         if (this.props.tileShape === "notif") {
             avatarSize = 24;
             needsSenderProfile = true;
+        } else if (tileHandler === 'messages.RoomCreate') {
+            avatarSize = 0;
+            needsSenderProfile = false;
         } else if (isInfoMessage) {
             // a small avatar, with no sender profile, for
             // joins/parts/etc
@@ -610,13 +622,14 @@ module.exports = withMatrixClient(React.createClass({
 
         switch (this.props.tileShape) {
             case 'notif': {
+                const EmojiText = sdk.getComponent('elements.EmojiText');
                 const room = this.props.matrixClient.getRoom(this.props.mxEvent.getRoomId());
                 return (
                     <div className={classes}>
                         <div className="mx_EventTile_roomName">
-                            <a href={permalink} onClick={this.onPermalinkClicked}>
+                            <EmojiText element="a" href={permalink} onClick={this.onPermalinkClicked}>
                                 { room ? room.name : '' }
-                            </a>
+                            </EmojiText>
                         </div>
                         <div className="mx_EventTile_senderDetails">
                             { avatar }
@@ -693,7 +706,6 @@ module.exports = withMatrixClient(React.createClass({
                         <div className="mx_EventTile_msgOption">
                             { readAvatars }
                         </div>
-                        { avatar }
                         { sender }
                         <div className="mx_EventTile_line">
                             <a href={permalink} onClick={this.onPermalinkClicked}>
@@ -710,6 +722,12 @@ module.exports = withMatrixClient(React.createClass({
                             { keyRequestInfo }
                             { editButton }
                         </div>
+                        {
+                            // The avatar goes after the event tile as it's absolutly positioned to be over the
+                            // event tile line, so needs to be later in the DOM so it appears on top (this avoids
+                            // the need for further z-indexing chaos)
+                        }
+                        { avatar }
                     </div>
                 );
             }
@@ -731,6 +749,8 @@ module.exports.haveTileForEvent = function(e) {
     if (handler === undefined) return false;
     if (handler === 'messages.TextualEvent') {
         return TextForEvent.textForEvent(e) !== '';
+    } else if (handler === 'messages.RoomCreate') {
+        return Boolean(e.getContent()['predecessor']);
     } else {
         return true;
     }
