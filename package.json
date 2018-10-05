@@ -1,6 +1,6 @@
 {
   "name": "@alohahealth/matrix-react-sdk",
-  "version": "0.13.5-aloha",
+  "version": "0.13.5",
   "description": "SDK for matrix.org using React",
   "author": "matrix.org",
   "repository": {
