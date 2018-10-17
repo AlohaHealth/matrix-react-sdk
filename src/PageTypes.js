@@ -25,4 +25,5 @@ export default {
     UserView: "user_view",
     GroupView: "group_view",
     MyGroups: "my_groups",
+    AlohaMyClinicalTrials: "my_clinical_trials",
 };

@@ -471,6 +471,7 @@ export default React.createClass({
     },
 
     onAction: function(payload) {
+
         // console.log(`MatrixClientPeg.onAction: ${payload.action}`);
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
@@ -739,6 +740,10 @@ export default React.createClass({
                 this.setState({
                     showCookieBar: false,
                 });
+                break;
+            case 'view_my_clinical_trials':
+                this._setPage(PageTypes.AlohaMyClinicalTrials);
+                this.notifyNewScreen('clinicaltrials');
                 break;
         }
     },
@@ -1534,7 +1539,12 @@ export default React.createClass({
                 action: 'view_group',
                 group_id: groupId,
             });
-        } else {
+        } else if (screen == 'clinicaltrials') {
+            dis.dispatch({
+                action: 'view_my_clinical_trials',
+            });
+        }
+        else {
             console.info("Ignoring showScreen for '%s'", screen);
         }
     },
