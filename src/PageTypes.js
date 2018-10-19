@@ -26,4 +26,6 @@ export default {
     GroupView: "group_view",
     MyGroups: "my_groups",
     AlohaMyClinicalTrials: "my_clinical_trials",
+    AlohaMyConsent: 'my_clinical_consent',
+    AlohaMyClinicalProfile: 'my_clinical_profile',
 };

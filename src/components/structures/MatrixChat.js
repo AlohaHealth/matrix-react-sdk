@@ -745,6 +745,14 @@ export default React.createClass({
                 this._setPage(PageTypes.AlohaMyClinicalTrials);
                 this.notifyNewScreen('clinicaltrials');
                 break;
+            case 'view_my_clinical_consent':
+              this._setPage(PageTypes.AlohaMyConsent);
+              this.notifyNewScreen('myclinicalconsent');
+              break;
+            case 'view_my_clinical_profile':
+              this._setPage(PageTypes.AlohaMyClinicalProfile);
+              this.notifyNewScreen('myclinicalprofile');
+              break;
         }
     },
 
@@ -1543,8 +1551,15 @@ export default React.createClass({
             dis.dispatch({
                 action: 'view_my_clinical_trials',
             });
-        }
-        else {
+        } else if (screen == 'myclinicalconsent') {
+          dis.dispatch({
+            action: 'view_my_clinical_consent',
+          })
+        } else if (screen == 'myclinicalprofile') {
+          dis.dispatch({
+            action: 'view_my_clinical_profile',
+          })
+        } else {
             console.info("Ignoring showScreen for '%s'", screen);
         }
     },
