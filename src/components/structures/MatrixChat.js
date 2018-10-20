@@ -471,6 +471,7 @@ export default React.createClass({
     },
 
     onAction: function(payload) {
+
         // console.log(`MatrixClientPeg.onAction: ${payload.action}`);
         const ErrorDialog = sdk.getComponent("dialogs.ErrorDialog");
         const QuestionDialog = sdk.getComponent("dialogs.QuestionDialog");
@@ -740,6 +741,18 @@ export default React.createClass({
                     showCookieBar: false,
                 });
                 break;
+            case 'view_my_clinical_trials':
+                this._setPage(PageTypes.AlohaMyClinicalTrials);
+                this.notifyNewScreen('clinicaltrials');
+                break;
+            case 'view_my_clinical_consent':
+              this._setPage(PageTypes.AlohaMyConsent);
+              this.notifyNewScreen('myclinicalconsent');
+              break;
+            case 'view_my_clinical_profile':
+              this._setPage(PageTypes.AlohaMyClinicalProfile);
+              this.notifyNewScreen('myclinicalprofile');
+              break;
         }
     },
 
@@ -1534,6 +1547,18 @@ export default React.createClass({
                 action: 'view_group',
                 group_id: groupId,
             });
+        } else if (screen == 'clinicaltrials') {
+            dis.dispatch({
+                action: 'view_my_clinical_trials',
+            });
+        } else if (screen == 'myclinicalconsent') {
+          dis.dispatch({
+            action: 'view_my_clinical_consent',
+          })
+        } else if (screen == 'myclinicalprofile') {
+          dis.dispatch({
+            action: 'view_my_clinical_profile',
+          })
         } else {
             console.info("Ignoring showScreen for '%s'", screen);
         }
