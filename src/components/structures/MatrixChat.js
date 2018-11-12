@@ -491,8 +491,7 @@ export default React.createClass({
             dis.dispatch({action: 'require_registration'});
             return;
         }
-        console.log("----------------------------- onAction ---------------------------");
-        console.log(payload.action);
+
         switch (payload.action) {
             case 'logout':
                 Lifecycle.logout();
@@ -1443,10 +1442,6 @@ export default React.createClass({
     },
 
     showScreen: function(screen, params) {
-      console.log("----------------------------- screen ---------------------------");
-      console.log(screen);
-      console.log("----------------------------- params ---------------------------");
-      console.log(params);
         if (screen == 'register') {
             dis.dispatch({
                 action: 'start_registration',
