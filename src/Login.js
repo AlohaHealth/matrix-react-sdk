@@ -259,7 +259,7 @@ export default class Login {
               homeserverUrl: self._hsUrl,
               identityServerUrl: self._isUrl,
               userId: data.user_id,
-              // deviceId: data.device_id,
+              deviceId: data.device_id,
               accessToken: data.access_token,
           });
       }).catch((error) => {
