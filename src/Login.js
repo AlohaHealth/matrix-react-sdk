@@ -240,4 +240,31 @@ export default class Login {
       const casUrl = client.getCasLoginUrl(url.format(parsedUrl));
       window.location.href = casUrl;
     }
+
+    // AHN Auth0
+    loginMatrixViaAuth0() {
+      const self = this;
+      const id_token = localStorage.getItem('ahn_id_token');
+      const access_token = localStorage.getItem('ahn_access_token');
+      const loginParams = {
+          type: "m.login.auth0",
+          id_token: id_token,
+          access_token: access_token,
+          initial_device_display_name: this._defaultDeviceDisplayName,
+      };
+      const client = this._createTemporaryClient();
+
+      return client.login('m.login.auth0', loginParams).then(function(data) {
+          return Promise.resolve({
+              homeserverUrl: self._hsUrl,
+              identityServerUrl: self._isUrl,
+              userId: data.user_id,
+              // deviceId: data.device_id,
+              accessToken: data.access_token,
+          });
+      }).catch((error) => {
+          console.log("Login failed", error);
+          throw error;
+      });
+    }
 }

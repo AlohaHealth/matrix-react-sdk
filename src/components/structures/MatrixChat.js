@@ -491,8 +491,7 @@ export default React.createClass({
             dis.dispatch({action: 'require_registration'});
             return;
         }
-        console.log("----------------------------- onAction ---------------------------");
-        console.log(payload.action);
+
         switch (payload.action) {
             case 'logout':
                 Lifecycle.logout();
@@ -1202,6 +1201,8 @@ export default React.createClass({
     _showScreenAfterLogin: function() {
         // If screenAfterLogin is set, use that, then null it so that a second login will
         // result in view_home_page, _user_settings or _room_directory
+        console.log("-------------------- Screen after Login ----------------");
+        console.log(this._screenAfterLogin.screen);
         if (this._screenAfterLogin && this._screenAfterLogin.screen) {
             this.showScreen(
                 this._screenAfterLogin.screen,
@@ -1443,10 +1444,6 @@ export default React.createClass({
     },
 
     showScreen: function(screen, params) {
-      console.log("----------------------------- screen ---------------------------");
-      console.log(screen);
-      console.log("----------------------------- params ---------------------------");
-      console.log(params);
         if (screen == 'register') {
             dis.dispatch({
                 action: 'start_registration',
@@ -1570,6 +1567,10 @@ export default React.createClass({
           dis.dispatch({
             action: 'view_my_clinical_profile',
           })
+        } else if (screen.indexOf('ccess_token=') == 0) { // @TODO: AHN this is a work-around
+            dis.dispatch({
+                action: 'view_home_page',
+            });
         } else {
             console.info("Ignoring showScreen for '%s'", screen);
         }
