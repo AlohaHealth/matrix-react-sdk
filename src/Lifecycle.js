@@ -350,9 +350,19 @@ async function _doSetLoggedIn(credentials, clearStorage) {
     // (dis.dispatch uses `setTimeout`, which does not guarantee ordering.)
     dis.dispatch({action: 'on_logging_in'}, true);
 
+    // @AHN: get AHN local storage before the clearStorage is called
+    const ahnAccessToken = window.localStorage.getItem("ahn_access_token");
+    const ahnIdToken = window.localStorage.getItem("ahn_id_token");
+    const ahnExpiresAt = window.localStorage.getItem("ahn_expires_at");
+
     if (clearStorage) {
         await _clearStorage();
     }
+
+    // @AHN: Preserve AHN Local storage
+    if (ahnAccessToken) window.localStorage.setItem("ahn_access_token", ahnAccessToken);
+    if (ahnIdToken) window.localStorage.setItem("ahn_id_token", ahnIdToken);
+    if (ahnExpiresAt) window.localStorage.setItem("ahn_expires_at", ahnExpiresAt);
 
     Analytics.setLoggedIn(credentials.guest, credentials.homeserverUrl, credentials.identityServerUrl);
 
@@ -508,6 +518,7 @@ function _clearStorage() {
     if (window.localStorage) {
         const hsUrl = window.localStorage.getItem("mx_hs_url");
         const isUrl = window.localStorage.getItem("mx_is_url");
+
         window.localStorage.clear();
 
         // preserve our HS & IS URLs for convenience
